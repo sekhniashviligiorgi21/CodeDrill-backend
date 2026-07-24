@@ -5,7 +5,6 @@ import os
 import requests
 from fastapi.staticfiles import StaticFiles
 import random
-import google.generativeai as genai
 from fastapi.responses import FileResponse
 
 easy_challenges = [
