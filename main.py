@@ -6,6 +6,19 @@ import requests
 from fastapi.staticfiles import StaticFiles
 import random
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://codedrill.netlify.app",
+        "http://localhost:5500",           
+        "http://127.0.0.1:5500"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 easy_challenges = [
     # 🟢 EASY
