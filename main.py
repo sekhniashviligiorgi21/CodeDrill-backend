@@ -488,5 +488,3 @@ async def writing_hard_code(request: Request):
         hard_code = f"Error: {response.status_code} - {response.text}"
 
     return {"AI's code": hard_code}
-
-app.mount("/frontend", StaticFiles(directory="frontend", html=True), name="frontend")
