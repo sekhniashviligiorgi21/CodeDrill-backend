@@ -6,22 +6,8 @@ import requests
 from fastapi.staticfiles import StaticFiles
 import random
 from fastapi.responses import FileResponse
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://codedrill.netlify.app",
-        "http://localhost:5500",           
-        "http://127.0.0.1:5500"
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 easy_challenges = [
-    # 🟢 EASY
     {
         "id": 1,
         "difficulty": "easy",
@@ -101,9 +87,10 @@ easy_challenges = [
         "description": "Return a list of squares for numbers from 1 through n.",
         "input_example": "5",
         "output_example": "[1, 4, 9, 16, 25]"
-    },]
+    }
+]
 
-medium_challenges=[
+medium_challenges = [
     {
         "id": 11,
         "difficulty": "medium",
@@ -183,9 +170,10 @@ medium_challenges=[
         "description": "Flatten a nested list (e.g. [1, [2, [3]]] → [1, 2, 3]).",
         "input_example": "[1, [2, [3]]]",
         "output_example": "[1, 2, 3]"
-    },]
+    }
+]
 
-hard_challenges=[
+hard_challenges = [
     {
         "id": 21,
         "difficulty": "hard",
@@ -265,9 +253,8 @@ hard_challenges=[
         "description": "Use BFS to find the shortest path in a 2D grid maze.",
         "input_example": "Grid with start and end points",
         "output_example": "Shortest distance (int)"
-    }]
-
-
+    }
+]
 
 if not os.getenv("RENDER"):
     load_dotenv()
@@ -275,12 +262,21 @@ if not os.getenv("RENDER"):
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_URL = "https://api.gemini.com"
 
-
+# ---------------------------------------------------------
+# 1. CREATE THE APP FIRST
+# ---------------------------------------------------------
 app = FastAPI()
 
+# ---------------------------------------------------------
+# 2. THEN ADD MIDDLEWARE
+# ---------------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://codedrill.netlify.app",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -288,7 +284,7 @@ app.add_middleware(
 
 @app.get("/home")
 def read_root():
-	return{"message":"home"}
+    return{"message":"home"}
 
 @app.get("/singleplayer")
 def singleplayer():
@@ -501,3 +497,11 @@ async def writing_hard_code(request: Request):
         hard_code = f"Error: {response.status_code} - {response.text}"
 
     return {"AI's code": hard_code}
+
+# ---------------------------------------------------------
+# 3. MOUNT STATIC FILES SAFELY AT THE VERY BOTTOM
+# ---------------------------------------------------------
+if os.path.isdir("frontend"):
+    app.mount("/frontend", StaticFiles(directory="frontend", html=True), name="frontend")
+else:
+    print("WARNING: 'frontend' directory not found. Skipping mount.")
